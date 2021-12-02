@@ -111,9 +111,45 @@ if __name__ == '__main__':
         """
         return entry.replace("-", "")
 
-    df.select(df["Social Security Number"]).show()
+    #df.select(df["Social Security Number"]).show()
     removeDashCharUDF = udf(lambda z: removeDashChar(z), StringType())
     df = df.withColumn("Social Security Number",removeDashCharUDF(col("Social Security Number")))
-    df.select(df["Social Security Number"]).show()
+    #df.select(df["Social Security Number"]).show()
+
+    # =======================
+    # 15.- Working with Joins
+    # =======================  
+
+    new_df = df.limit(8)
+
+    dept = [("Logistics",10), \
+        ("Inventory",20), \
+        ("Domestic operations",30), \
+        ("International Operations",40), \
+        ("Jewelry",50), \
+        ("Cosmetics",60), \
+    ]
+    deptColumns = ["Department name","Department ID"]
+    deptDF = spark.createDataFrame(data=dept, schema = deptColumns)
+
+    print("INNER JOIN")
+    print("==========")
+    new_df.join(deptDF,new_df["Retail Department"] ==  deptDF["Department name"],"inner") \
+     .show()
+
+    print("OUTER JOIN")
+    print("==========")
+    new_df.join(deptDF,new_df["Retail Department"] ==  deptDF["Department name"],"outer") \
+     .show()
+
+    print("LEFT JOIN")
+    print("==========")
+    new_df.join(deptDF,new_df["Retail Department"] ==  deptDF["Department name"],"left") \
+     .show()
+
+    print("RIGHT JOIN")
+    print("==========")
+    new_df.join(deptDF,new_df["Retail Department"] ==  deptDF["Department name"],"right") \
+     .show()
 
     spark.stop()

@@ -121,6 +121,40 @@ object Example {
     spark.catalog.dropTempView("shopping")
     sqlDF.show()
 
+    // =======================
+    // 15.- Working with Joins
+    // =======================  
+
+    val new_df = df.limit(8)
+
+    val dept = Seq(("Logistics",10),
+    ("Inventory",20),("Domestic operations",30),
+    ("International Operations",40),("Jewelry",50),
+    ("Cosmetics",60)
+    )
+       
+    import spark.implicits._
+    
+    val deptColumns = Seq("Department name","Department ID")
+    val deptDF = dept.toDF(deptColumns:_*)
+
+    println("INNER JOIN")
+    println("==========")
+    new_df.join(deptDF,new_df("Retail Department") ===  deptDF("Department name"),"inner").show()
+
+    println("OUTER JOIN")
+    println("==========")
+    new_df.join(deptDF,new_df("Retail Department") ===  deptDF("Department name"),"outer").show()
+
+    println("LEFT JOIN")
+    println("==========")
+    new_df.join(deptDF,new_df("Retail Department") ===  deptDF("Department name"),"left").show()
+
+    println("RIGHT JOIN")
+    println("==========")
+    new_df.join(deptDF,new_df("Retail Department") ===  deptDF("Department name"),"right").show()
+
+
     spark.stop()
 
   }  
